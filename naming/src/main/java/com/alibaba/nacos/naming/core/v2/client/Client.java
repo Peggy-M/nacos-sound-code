@@ -37,6 +37,7 @@ public interface Client {
      *
      * @return id of client
      */
+    //获取当前客户端的唯一 Id
     String getClientId();
     
     /**
@@ -44,11 +45,13 @@ public interface Client {
      *
      * @return true if client is ephemeral, otherwise false
      */
+    //当前客户的是否短暂的
     boolean isEphemeral();
     
     /**
      * Set the last time for updating current client as current time.
      */
+    //设置该客户端的最后更新时间为当前的时间
     void setLastUpdatedTime();
     
     /**
@@ -56,6 +59,7 @@ public interface Client {
      *
      * @return last time for updating
      */
+    //获取最近一次客户更新的时间
     long getLastUpdatedTime();
     
     /**
@@ -65,6 +69,7 @@ public interface Client {
      * @param instancePublishInfo instance
      * @return true if add successfully, otherwise false
      */
+    //为当前客户端添加服务的新实例
     boolean addServiceInstance(Service service, InstancePublishInfo instancePublishInfo);
     
     /**
@@ -73,6 +78,7 @@ public interface Client {
      * @param service service of instance
      * @return instance info if exist, otherwise {@code null}
      */
+    //从客户端删除服务实例
     InstancePublishInfo removeServiceInstance(Service service);
     
     /**
@@ -81,6 +87,7 @@ public interface Client {
      * @param service service of instance
      * @return instance info
      */
+    //从客户端获取实例的服务信息
     InstancePublishInfo getInstancePublishInfo(Service service);
     
     /**
@@ -88,6 +95,7 @@ public interface Client {
      *
      * @return published services
      */
+    //获取当前客户端已经发布的所有信息
     Collection<Service> getAllPublishedService();
     
     /**
@@ -97,6 +105,7 @@ public interface Client {
      * @param subscriber subscriber
      * @return true if add successfully, otherwise false
      */
+    //为目标服务添加新的订阅者
     boolean addServiceSubscriber(Service service, Subscriber subscriber);
     
     /**
@@ -105,6 +114,7 @@ public interface Client {
      * @param service service of subscriber
      * @return true if remove successfully, otherwise false
      */
+    //删除服务的订阅者
     boolean removeServiceSubscriber(Service service);
     
     /**
@@ -113,6 +123,7 @@ public interface Client {
      * @param service service of subscriber
      * @return subscriber
      */
+    //从客户端获取服务的订阅者
     Subscriber getSubscriber(Service service);
     
     /**
@@ -120,6 +131,7 @@ public interface Client {
      *
      * @return subscribe services
      */
+    //获取当前客户的所有订阅服务
     Collection<Service> getAllSubscribeService();
     
     /**
