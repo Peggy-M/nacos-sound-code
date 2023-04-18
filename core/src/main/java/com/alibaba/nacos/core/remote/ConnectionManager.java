@@ -216,6 +216,7 @@ public class ConnectionManager extends Subscriber<ConnectionLimitRuleChangeEvent
      *
      * @param connectionId connectionId.
      */
+    //注销（移除）连接的方法
     public synchronized void unregister(String connectionId) {
         Connection remove = this.connections.remove(connectionId);
         if (remove != null) {
@@ -287,8 +288,14 @@ public class ConnectionManager extends Subscriber<ConnectionLimitRuleChangeEvent
      */
     @PostConstruct
     public void start() {
-        
+        /**
+         * 没 3s 检测所有超过 20s 没有发生过通讯的客户端,向客户端发起 ClientDetectionRequte 探测请求
+         * 如果客户端在 1s 内成功响应，则检测通过，否则执行 unregister 方法移除 Connection
+         *
+         * 如果客户端持续与服务端通讯，服务端是不需要主动探活
+         */
         // Start UnHealthy Connection Expel Task.
+        // 启动不健康连接的排除驱逐任务
         RpcScheduledExecutor.COMMON_SERVER_EXECUTOR.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
@@ -297,6 +304,7 @@ public class ConnectionManager extends Subscriber<ConnectionLimitRuleChangeEvent
                     int totalCount = connections.size();
                     Loggers.REMOTE_DIGEST.info("Connection check task start");
                     MetricsMonitor.getLongConnectionMonitor().set(totalCount);
+                    //统计过时（20s）连接
                     Set<Map.Entry<String, Connection>> entries = connections.entrySet();
                     int currentSdkClientCount = currentSdkClientCount();
                     boolean isLoaderClient = loadClient >= 0;
@@ -406,6 +414,7 @@ public class ConnectionManager extends Subscriber<ConnectionLimitRuleChangeEvent
                     
                     //4.client active detection.
                     Loggers.REMOTE_DIGEST.info("Out dated connection ,size={}", outDatedConnections.size());
+                    //异步请求所有需要检测的连接
                     if (CollectionUtils.isNotEmpty(outDatedConnections)) {
                         Set<String> successConnections = new HashSet<>();
                         final CountDownLatch latch = new CountDownLatch(outDatedConnections.size());
@@ -459,7 +468,7 @@ public class ConnectionManager extends Subscriber<ConnectionLimitRuleChangeEvent
                         latch.await(3000L, TimeUnit.MILLISECONDS);
                         Loggers.REMOTE_DIGEST
                                 .info("Out dated connection check successCount={}", successConnections.size());
-                        
+                        //对于没有成功响应的客户端，执行 unregister 移除
                         for (String outDateConnectionId : outDatedConnections) {
                             if (!successConnections.contains(outDateConnectionId)) {
                                 Loggers.REMOTE_DIGEST

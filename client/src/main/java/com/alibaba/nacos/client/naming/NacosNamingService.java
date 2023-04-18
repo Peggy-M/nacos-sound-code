@@ -222,16 +222,22 @@ public class NacosNamingService implements NamingService {
     public List<Instance> getAllInstances(String serviceName, String groupName, List<String> clusters,
             boolean subscribe) throws NacosException {
         ServiceInfo serviceInfo;
+        //获取当前的集群
         String clusterString = StringUtils.join(clusters, ",");
+        //是否订阅模式（默认 true ）
         if (subscribe) {
+            //获取客户端缓存中获取服务信息
             serviceInfo = serviceInfoHolder.getServiceInfo(serviceName, groupName, clusterString);
             if (null == serviceInfo) {
+                //如果本地的缓存不存在服务信息，则进行订阅
                 serviceInfo = clientProxy.subscribe(serviceName, groupName, clusterString);
             }
         } else {
+            //如果未订阅服务信息，则直接从服务器进行查询
             serviceInfo = clientProxy.queryInstancesOfService(serviceName, groupName, clusterString, 0, false);
         }
         List<Instance> list;
+        //从服务信息当中获取实例列表
         if (serviceInfo == null || CollectionUtils.isEmpty(list = serviceInfo.getHosts())) {
             return new ArrayList<Instance>();
         }

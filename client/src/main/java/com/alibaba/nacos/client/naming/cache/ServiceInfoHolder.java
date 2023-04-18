@@ -57,7 +57,8 @@ public class ServiceInfoHolder implements Closeable {
     private static final String FILE_PATH_NAMING = "naming";
     
     private static final String USER_HOME_PROPERTY = "user.home";
-    
+
+    //线程安全
     private final ConcurrentMap<String, ServiceInfo> serviceInfoMap;
     
     private final FailoverReactor failoverReactor;
@@ -69,8 +70,10 @@ public class ServiceInfoHolder implements Closeable {
     public ServiceInfoHolder(String namespace, Properties properties) {
         initCacheDir(namespace, properties);
         if (isLoadCacheAtStart(properties)) {
+            //DiskCache.read() 从磁盘中读取缓存信息
             this.serviceInfoMap = new ConcurrentHashMap<String, ServiceInfo>(DiskCache.read(this.cacheDir));
         } else {
+            //如果是第一次未有缓存则初始化一个默认大小的集合
             this.serviceInfoMap = new ConcurrentHashMap<String, ServiceInfo>(16);
         }
         this.failoverReactor = new FailoverReactor(this, cacheDir);
@@ -86,6 +89,7 @@ public class ServiceInfoHolder implements Closeable {
         }
         
         if (!StringUtils.isBlank(jmSnapshotPath)) {
+            //初始化获取磁盘中缓存信息的 key
             cacheDir = jmSnapshotPath + File.separator + FILE_PATH_NACOS + namingCacheRegistryDir
                     + File.separator + FILE_PATH_NAMING + File.separator + namespace;
         } else {
