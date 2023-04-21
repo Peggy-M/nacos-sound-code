@@ -294,11 +294,14 @@ public class NotifyCenter {
         if (ClassUtils.isAssignableFrom(SlowEvent.class, eventType)) {
             return INSTANCE.sharePublisher.publish(event);
         }
-        
+        // 根据 InstancesChangeEvent 事件类型，获得对应的 CanonicalName
         final String topic = ClassUtils.getCanonicalName(eventType);
-        
+        // 将CanonicalName作为Key，从NotifyCenter#publisherMap中获取对应的事件发布者（EventPublisher）
+        // INSTANCE 只有一个是单利关于 publisherMap 中的 key val 关系的建立时机,其实是在 NacosNamingService 实例化时调用 init
+        // 初始化方法中进行绑定的
         EventPublisher publisher = INSTANCE.publisherMap.get(topic);
         if (publisher != null) {
+            // 事件发布者publisher发布事件（InstancesChangeEvent）
             return publisher.publish(event);
         }
         LOGGER.warn("There are no [{}] publishers for this event, please register", topic);

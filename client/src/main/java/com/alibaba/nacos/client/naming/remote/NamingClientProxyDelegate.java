@@ -136,19 +136,27 @@ public class NamingClientProxyDelegate implements NamingClientProxy {
             throws NacosException {
         return grpcClientProxy.getServiceList(pageNo, pageSize, groupName, selector);
     }
-    
+
+    //其实走到这里就可以看到,该方法与之前的服务发现调用的是同一个方法,这里其实在做的是服务列表的查询
+    //查询与订阅都调用了同样的而方法
     @Override
     public ServiceInfo subscribe(String serviceName, String groupName, String clusters) throws NacosException {
         String serviceNameWithGroup = NamingUtils.getGroupedName(serviceName, groupName);
         String serviceKey = ServiceInfo.getKey(serviceNameWithGroup, clusters);
+        //开启定时任务调度 UpdateTask
         serviceInfoUpdateService.scheduleUpdateIfAbsent(serviceName, groupName, clusters);
+        //获取缓存中的 ServiceInfo
         ServiceInfo result = serviceInfoHolder.getServiceInfoMap().get(serviceKey);
         if (null == result) {
+            //如果缓存中没有数据,则进行订阅逻辑处理,基于 gRPC 协议
             result = grpcClientProxy.subscribe(serviceName, groupName, clusters);
         }
+        //serviceInfo 本地缓存处理
         serviceInfoHolder.processServiceInfo(result);
         return result;
     }
+
+
     
     @Override
     public void unsubscribe(String serviceName, String groupName, String clusters) throws NacosException {

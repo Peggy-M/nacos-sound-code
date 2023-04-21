@@ -89,6 +89,7 @@ public class NacosNamingService implements NamingService {
         initLogName(properties);
         
         this.changeNotifier = new InstancesChangeNotifier();
+        // publisher 的注册过程在于建立 InstancesChangeEvent.class 与 EventPublisher 的关系
         NotifyCenter.registerToPublisher(InstancesChangeEvent.class, 16384);
         NotifyCenter.registerSubscriber(changeNotifier);
         this.serviceInfoHolder = new ServiceInfoHolder(namespace, properties);
@@ -182,6 +183,7 @@ public class NacosNamingService implements NamingService {
     
     @Override
     public List<Instance> getAllInstances(String serviceName) throws NacosException {
+        //调用重载方法，赋值默认的参数
         return getAllInstances(serviceName, new ArrayList<String>());
     }
     
@@ -192,6 +194,7 @@ public class NacosNamingService implements NamingService {
     
     @Override
     public List<Instance> getAllInstances(String serviceName, boolean subscribe) throws NacosException {
+        //创建一个空的集群对象集合
         return getAllInstances(serviceName, new ArrayList<String>(), subscribe);
     }
     
@@ -203,6 +206,7 @@ public class NacosNamingService implements NamingService {
     
     @Override
     public List<Instance> getAllInstances(String serviceName, List<String> clusters) throws NacosException {
+        //默认已经订阅
         return getAllInstances(serviceName, clusters, true);
     }
     
@@ -215,6 +219,7 @@ public class NacosNamingService implements NamingService {
     @Override
     public List<Instance> getAllInstances(String serviceName, List<String> clusters, boolean subscribe)
             throws NacosException {
+        //默认的组为 DEFAULT_GROUP
         return getAllInstances(serviceName, Constants.DEFAULT_GROUP, clusters, subscribe);
     }
     
@@ -230,6 +235,7 @@ public class NacosNamingService implements NamingService {
             serviceInfo = serviceInfoHolder.getServiceInfo(serviceName, groupName, clusterString);
             if (null == serviceInfo) {
                 //如果本地的缓存不存在服务信息，则进行订阅
+                //查找到最新的实例信息
                 serviceInfo = clientProxy.subscribe(serviceName, groupName, clusterString);
             }
         } else {
@@ -372,9 +378,11 @@ public class NacosNamingService implements NamingService {
             return Balancer.RandomByWeight.selectHost(serviceInfo);
         }
     }
-    
+    //在 NacosNamingService 中暴露了许多的重载的 subscribe 方法
+    //这里 NacosNamingService 类下的 subscribe 方法 和 NamingService 下的 getAllInstances 发现获取实例列表的方法重载的过程都是一样的
     @Override
     public void subscribe(String serviceName, EventListener listener) throws NacosException {
+        //创建一个空的集群对象集合
         subscribe(serviceName, new ArrayList<String>(), listener);
     }
     
@@ -385,17 +393,21 @@ public class NacosNamingService implements NamingService {
     
     @Override
     public void subscribe(String serviceName, List<String> clusters, EventListener listener) throws NacosException {
+        //设置默认的群组 DEFAULT_GROUP 默认群组
         subscribe(serviceName, Constants.DEFAULT_GROUP, clusters, listener);
     }
     
     @Override
     public void subscribe(String serviceName, String groupName, List<String> clusters, EventListener listener)
             throws NacosException {
+        //如果事件监听器为空 则返回
         if (null == listener) {
             return;
         }
         String clusterString = StringUtils.join(clusters, ",");
+        //注册监听器
         changeNotifier.registerListener(groupName, serviceName, clusterString, listener);
+        //对于订阅的本质就是服务的发现的一种方式,也就是服务在发现的时候执行订阅方法,同时触发定时任务去服务端拉去数据
         clientProxy.subscribe(serviceName, groupName, clusterString);
     }
     

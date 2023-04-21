@@ -61,11 +61,15 @@ public class DefaultPublisher extends Thread implements EventPublisher {
     
     @Override
     public void init(Class<? extends Event> type, int bufferSize) {
+        //守护线程
         setDaemon(true);
+        //设置线程名字
         setName("nacos.publisher-" + type.getName());
         this.eventType = type;
         this.queueMaxSize = bufferSize;
+        //阻塞队列初始化
         this.queue = new ArrayBlockingQueue<>(bufferSize);
+        //调用启动当前线程的方法
         start();
     }
     
@@ -74,9 +78,11 @@ public class DefaultPublisher extends Thread implements EventPublisher {
     }
     
     @Override
-    public synchronized void start() {
+    public synchronized void start() { // 在 run 方法中执行对应的程序
+        //判断是否完成初始化
         if (!initialized) {
             // start just called once
+            //启动当前的线程
             super.start();
             if (queueMaxSize == -1) {
                 queueMaxSize = ringBufferSize;
@@ -109,12 +115,13 @@ public class DefaultPublisher extends Thread implements EventPublisher {
                 ThreadUtils.sleep(1000L);
                 waitTimes--;
             }
-            
+            // 死循环不断的从队列当中取出 Event ，并通知订阅者 Subscriber 执行 Event 事件
             for (; ; ) {
                 if (shutdown) {
                     break;
                 }
                 final Event event = queue.take();
+                //执行 Event 事件
                 receiveEvent(event);
                 UPDATER.compareAndSet(this, lastEventSequence, Math.max(lastEventSequence, event.sequence()));
             }

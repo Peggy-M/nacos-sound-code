@@ -53,7 +53,8 @@ public class NamingTest {
         namingService.registerInstance("nacos.test.1", instance);
         
         ThreadUtils.sleep(5000L);
-        
+
+        //获取所以的实例信息,这里的实例信息就是客户端的信息
         List<Instance> list = namingService.getAllInstances("nacos.test.1");
         
         System.out.println(list);
