@@ -156,8 +156,6 @@ public class NamingClientProxyDelegate implements NamingClientProxy {
         return result;
     }
 
-
-    
     @Override
     public void unsubscribe(String serviceName, String groupName, String clusters) throws NacosException {
         serviceInfoUpdateService.stopUpdateIfContain(serviceName, groupName, clusters);
@@ -174,9 +172,9 @@ public class NamingClientProxyDelegate implements NamingClientProxy {
         return grpcClientProxy.serverHealthy() || httpClientProxy.serverHealthy();
     }
     
-        private NamingClientProxy getExecuteClientProxy(Instance instance) {
-            return instance.isEphemeral() ? grpcClientProxy : httpClientProxy;
-        }
+    private NamingClientProxy getExecuteClientProxy(Instance instance) {
+        return instance.isEphemeral() ? grpcClientProxy : httpClientProxy;
+    }
     
     @Override
     public void shutdown() throws NacosException {

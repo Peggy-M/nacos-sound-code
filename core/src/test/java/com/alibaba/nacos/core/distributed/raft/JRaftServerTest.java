@@ -18,7 +18,6 @@ package com.alibaba.nacos.core.distributed.raft;
 
 import com.alibaba.nacos.consistency.RequestProcessor;
 import com.alibaba.nacos.consistency.cp.RequestProcessor4CP;
-import com.alibaba.nacos.consistency.entity.ReadRequest;
 import com.alibaba.nacos.consistency.entity.Response;
 import com.alibaba.nacos.consistency.entity.WriteRequest;
 import com.alibaba.nacos.core.distributed.raft.utils.FailoverClosure;

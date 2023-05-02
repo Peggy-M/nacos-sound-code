@@ -16,9 +16,6 @@
 
 package com.alibaba.nacos.core.distributed.raft;
 
-import com.alibaba.nacos.consistency.entity.ReadRequest;
-import com.alibaba.nacos.consistency.entity.Response;
-import com.alibaba.nacos.consistency.entity.WriteRequest;
 import com.alibaba.nacos.core.cluster.ServerMemberManager;
 import com.alipay.sofa.jraft.Node;
 import com.google.protobuf.Message;

@@ -19,7 +19,6 @@ package com.alibaba.nacos.naming.core.v2.service.impl;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.alibaba.nacos.consistency.Serializer;
 import com.alibaba.nacos.consistency.cp.CPProtocol;
-import com.alibaba.nacos.consistency.entity.WriteRequest;
 import com.alibaba.nacos.core.distributed.ProtocolManager;
 import com.alibaba.nacos.naming.core.v2.client.manager.impl.PersistentIpPortClientManager;
 import com.alibaba.nacos.naming.core.v2.pojo.Service;

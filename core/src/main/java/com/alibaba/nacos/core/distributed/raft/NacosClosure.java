@@ -64,7 +64,7 @@ public class NacosClosure implements Closure {
     public Message getMessage() {
         return message;
     }
-    
+
     // Pass the Throwable inside the state machine to the outer layer
     
     @SuppressWarnings("PMD.ClassNamingShouldBeCamelRule")

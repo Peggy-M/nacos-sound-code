@@ -288,7 +288,7 @@ public class ConnectionManager extends Subscriber<ConnectionLimitRuleChangeEvent
      */
     @PostConstruct
     public void start() {
-        /**
+        /*
          * 没 3s 检测所有超过 20s 没有发生过通讯的客户端,向客户端发起 ClientDetectionRequte 探测请求
          * 如果客户端在 1s 内成功响应，则检测通过，否则执行 unregister 方法移除 Connection
          *

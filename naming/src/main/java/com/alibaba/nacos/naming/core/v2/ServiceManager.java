@@ -36,6 +36,7 @@ public class ServiceManager {
     //单例Service，可以查看Service的equals和hasCode方法
     private final ConcurrentHashMap<Service, Service> singletonRepository;
     //namespace 的所有 Service
+
     private final ConcurrentHashMap<String, Set<Service>> namespaceSingletonMaps;
     
     private ServiceManager() {

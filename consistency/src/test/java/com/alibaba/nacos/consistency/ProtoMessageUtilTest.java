@@ -16,8 +16,6 @@
 
 package com.alibaba.nacos.consistency;
 
-import com.alibaba.nacos.consistency.entity.Log;
-import com.alibaba.nacos.consistency.entity.WriteRequest;
 import org.junit.Assert;
 import org.junit.Test;
 

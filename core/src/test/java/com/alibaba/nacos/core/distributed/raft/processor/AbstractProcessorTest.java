@@ -17,8 +17,6 @@
 package com.alibaba.nacos.core.distributed.raft.processor;
 
 import com.alibaba.nacos.consistency.SerializeFactory;
-import com.alibaba.nacos.consistency.entity.Response;
-import com.alibaba.nacos.consistency.entity.WriteRequest;
 import com.alibaba.nacos.core.distributed.raft.JRaftServer;
 import com.alibaba.nacos.core.distributed.raft.utils.FailoverClosure;
 import com.alipay.sofa.jraft.Node;

@@ -53,16 +53,21 @@ public class InstancesChangeNotifier extends Subscriber<InstancesChangeEvent> {
      */
     public void registerListener(String groupName, String serviceName, String clusters, EventListener listener) {
         String key = ServiceInfo.getKey(NamingUtils.getGroupedName(serviceName, groupName), clusters);
+        //从缓存当中获取时间监听器对象
         ConcurrentHashSet<EventListener> eventListeners = listenerMap.get(key);
+        //如果缓存当中没有监听的对象
         if (eventListeners == null) {
             synchronized (lock) {
                 eventListeners = listenerMap.get(key);
                 if (eventListeners == null) {
+                    // 创建一个事件监听器
                     eventListeners = new ConcurrentHashSet<EventListener>();
+                    //将事件监听器添加到缓存当中
                     listenerMap.put(key, eventListeners);
                 }
             }
         }
+        //并将监听事件添加到当前对象的监听器当中
         eventListeners.add(listener);
     }
     
